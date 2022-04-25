@@ -1,88 +1,75 @@
-#Solar System
-from OpenGL.GL import *
+from OpenGL.GL import*
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-import time
-import math
-from  math import *
-import numpy
-import sys
-sys.setrecursionlimit(8000000)
+from math import *
+angle=0
 def init():
-	glClearColor(0.0,0.0,0.0,0.0)
+	glClearColor(0,0,0,0)
+	gluOrtho2D(-1000,1000,-1000,1000)
+	glColor3f(0,0,1)
+	glPointSize(2.0)
 	
-	glPointSize(3)
-	glMatrixMode(GL_PROJECTION)
-	glLoadIdentity()
-	gluOrtho2D(0.0,800.0,0.0,800.0)
-
-def setpixn(xcor,ycor):
-	glBegin(GL_POINTS)	
-	glVertex2i(xcor,ycor)
+def circle():
+	global angle
+	i=0
+	radius=50
+	xradius=250
+	yradius=150
+	glColor3f(1,0,1)
+	glBegin(GL_POINTS)
+	
+	while i<=360:
+		radian=(3.14*i)/180
+		x=xradius*cos(radian)
+		y=yradius*sin(radian)
+		
+		glVertex2f(x,y)
+		
+		i=i+1
+	glEnd()	
+	glColor3f(1,1,0)
+	glBegin(GL_TRIANGLE_FAN)
+	for i in range(1,361):
+		glVertex2f(radius*cos(radians(i)),radius*sin(radians(i)))
 	glEnd()
-	glFlush()
-def circle(cx,cy,r):
-	for i in range(361):
-		m=r*math.cos(i*3.14/180)+cx
-		n=r*math.sin(i*3.14/180)+cy
-		glBegin(GL_POINTS)
-		
-		glVertex2f(m,n)
-		glEnd()
-	glFlush()
 	
-def eclps(rx,ry,cx,cy):
-	the=0
-	redd=10
-	for i in range(9):
-		
+	glColor3f(0.3,1,0.3)
+	glBegin(GL_TRIANGLE_FAN)
+	for i in range(1,361):
+		glVertex2f((250*cos(radians(angle)))+radius*cos(radians(i)),150*sin(radians(angle))+radius*sin(radians(i)))
+	glEnd()
 
-		for i in range(361):
-			m=rx*math.cos(i*3.14/180)+cx
-			n=ry*math.sin(i*3.14/180)+cy
-			glBegin(GL_POINTS)
+
+def redraw(x):
+	global angle
+	angle+=10
 	
-			glVertex2f(m,n)
-			glEnd()
-		glFlush()
-		circle(cx+rx*math.cos(the*3.14/180),cy+ry*math.sin(the*3.14/180),redd)
-		rx=rx+40
-		ry=ry+20		
-		the=the+30
-		redd=redd+2
-
-def rotatecircle(aa):
-	the=aa
-	redd=10
-	rx=30
-	ry=20
-	for i in range(9):
-		circle(400+rx*math.cos(the*3.14/180),400+ry*math.sin(the*3.14/180),redd)
-		rx=rx+40
-		ry=ry+20		
-		the=the+30
-		redd=redd+2
-
-def Display():
+	glutPostRedisplay()
+	glutTimerFunc(int(1000/60),redraw,0)
+	
+	
+	
+		
+	
+	
+	
+def pp():
 	glClear(GL_COLOR_BUFFER_BIT)
-	eclps(30,20,400,400)
-	circle(400,400,10)
-	k=0
-	while True:
-		glColor3f(1.0,0.0,0.0)
-		rotatecircle(k)
-		time.sleep(1)
-		glColor3f(0.0,0.0,0.0)
-		rotatecircle(k)
-		k=k+10
-		
+	
+	glBegin(GL_POINTS)
+	glVertex2f(0,0)
+	glEnd()
+	circle()
+	glutSwapBuffers()
 def main():
 	glutInit(sys.argv)
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB)
-	glutInitWindowSize(800,800)
-	glutInitWindowPosition(10,10)
-	glutCreateWindow("Solar System")
-	glutDisplayFunc(Display)
+	glutInitDisplayMode(GLUT_RGB|GLUT_DOUBLE)
+	glutInitWindowPosition(50,50)
+	glutInitWindowSize(1000,1000)
+	
+	glutCreateWindow("sumit")
+	glutDisplayFunc(pp)
+	glutTimerFunc(0,redraw,0)
 	init()
 	glutMainLoop()
 main()

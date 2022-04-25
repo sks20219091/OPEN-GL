@@ -1,134 +1,109 @@
-#Moving Man
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-import time
-import math
-import sys
+from math import *
+
+angle=0.0
 
 def init():
-	glClearColor(0.0,1.0,1.0,0.0)
-	glPointSize(2)
-	glMatrixMode(GL_PROJECTION)
-	glLoadIdentity()
-	gluOrtho2D(0.0,800.0,0.0,800.0)
+	glClearColor(0,0,0,0)
+	gluOrtho2D(-500,500,-500,500)
+	glColor3f(1,1,0)
+	glPointSize(2.0)
 
-def setpix(xcor,ycor):
-	glBegin(GL_POINTS)
+def redraw(x):
+	global angle
+	glutPostRedisplay()
+	glutTimerFunc(int(1000/60),redraw,0)
+	angle+=5
 	
-	glVertex2f(xcor,ycor)
-	glEnd()
-	glFlush()
-def head(t,tt):
-	global r,cx,cy
-	r=20
-	cx=t
-	cy=tt
-	for i in range(361):
-		
-		m=int(r*math.cos(i*3.14/180.0))+cx
-		n=int(r*math.sin(i*3.14/180.0))+cy
+
+def circle():
+	global angle
+	rx=200
+	ry=150
+	
+	i=0
+	while i<=360:
+		rad = (3.14*i)/180
+		x=rx*cos(rad)
+		y=ry*sin(rad)
+		glColor3f(1,0,0)
 		glBegin(GL_POINTS)
-	
-		glVertex2f(m,n)
+		glVertex2f(x,y)
 		glEnd()
-	glFlush()
+		i=i+1
+	
+	
+	glColor3f(0.5,0.5,0.8)
+	glBegin(GL_TRIANGLE_FAN)
+	
+	i=0
+	r=50
+	while i<=360:
+		rad = (3.14*i)/180
+		x=r*cos(rad)
+		y=r*sin(rad)
+		glVertex2f(x+200*cos(radians(angle)),y+150*sin(radians(angle)))
+		i=i+1
+	glEnd()
+	
+	
+	
+	
+	glColor3f(1,1,0)
+	glBegin(GL_TRIANGLE_FAN)
+	
+	i=0
+	r=100
+	while i<=360:
+		rad = (3.14*i)/180
+		x=r*cos(rad)
+		y=r*sin(rad)
+		glVertex2f(x,y)
+		i=i+1
+	glEnd()
 
 	
-def hand1():
-	glBegin(GL_LINES)
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180)-20)
-	glVertex2f(cx+r*math.cos(270*3.14/180)+20,cy+r*math.sin(270*3.14/180)-30) #right straight
-
-	glVertex2f(cx+r*math.cos(270*3.14/180)+20,cy+r*math.sin(270*3.14/180)-30)
-	glVertex2f(cx+r*math.cos(270*3.14/180)+5,cy+r*math.sin(270*3.14/180)-40) #right bend
-
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180)-20)
-	glVertex2f(cx+r*math.cos(270*3.14/180)-20,cy+r*math.sin(270*3.14/180)-30) #left straight
-
-	glVertex2f(cx+r*math.cos(270*3.14/180)-20,cy+r*math.sin(270*3.14/180)-30)
-	glVertex2f(cx+r*math.cos(270*3.14/180)-5,cy+r*math.sin(270*3.14/180)-40) #left bend
-	glEnd()
-	glFlush()
-
-def hand2():
-	glBegin(GL_LINES)
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180)-20)
-	glVertex2f(cx+r*math.cos(270*3.14/180)+10,cy+r*math.sin(270*3.14/180)-50) #right straight
-
-	glVertex2f(cx+r*math.cos(270*3.14/180)+10,cy+r*math.sin(270*3.14/180)-50)
-	glVertex2f(cx+r*math.cos(270*3.14/180)+5,cy+r*math.sin(270*3.14/180)-70) #right bend
-
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180)-20)
-	glVertex2f(cx+r*math.cos(270*3.14/180)-10,cy+r*math.sin(270*3.14/180)-50) #right straight
-
-	glVertex2f(cx+r*math.cos(270*3.14/180)-10,cy+r*math.sin(270*3.14/180)-50)
-	glVertex2f(cx+r*math.cos(270*3.14/180)-5,cy+r*math.sin(270*3.14/180)-70) #left bend
-	glEnd()
-	glFlush()
-def leg1():
-	glBegin(GL_LINES)
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180)-80)
-	glVertex2f(cx+r*math.cos(270*3.14/180)+30,cy+r*math.sin(270*3.14/180)-100) #right leg
-
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180)-80)
-	glVertex2f(cx+r*math.cos(270*3.14/180)-30,cy+r*math.sin(270*3.14/180)-100)
-	glEnd()
-	glFlush()
-def leg2():
-	glBegin(GL_LINES)
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180)-80)
-	glVertex2f(cx+r*math.cos(270*3.14/180)+15,cy+r*math.sin(270*3.14/180)-100)
-
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180)-80)
-	glVertex2f(cx+r*math.cos(270*3.14/180)-15,cy+r*math.sin(270*3.14/180)-100)
-	glEnd()
-	glFlush()
 		
-def body(t,tt):
-	cx=t
-	cy=tt
-	glBegin(GL_LINES)
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180))
-	glVertex2f(cx+r*math.cos(270*3.14/180),cy+r*math.sin(270*3.14/180)-80) #body		
-	glEnd()
-	glFlush()
 		
-def Display():
+
+def pandaal():
+	glLineWidth(2.0)	
+	i=400
+	j=400
+	while i >= -400:
+		glBegin(GL_LINES)
+		glVertex2f(-500,i)
+		glVertex2f(500,i)
+		glEnd()
+		i=i-100
+		
+	while j >= -400:
+		glBegin(GL_LINES)
+		glVertex2f(j,500)
+		glVertex2f(j,-500)
+		glEnd()
+		j=j-100
+	
+	
+	
+def pp():
 	glClear(GL_COLOR_BUFFER_BIT)
-	varcenx=100
-	varceny=200
-	while True:
-		glColor3f(1.0,0.0,0.0)
-		head(varcenx,varceny)
-		body(varcenx,varceny)
-		hand1()
-		leg1()
-		time.sleep(0.5)
-		glColor3f(0.0,1.0,1.0)
-		hand1()
-		leg1()
-		glColor3f(1.0,0.0,0.0)
-		hand2()
-		leg2()
-		time.sleep(0.5)
-		glColor3f(0.0,1.0,1.0)
-		hand2()
-		leg2()
-		head(varcenx,varceny)
-		body(varcenx,varceny)
-		varcenx=varcenx+10
-			
-		
+	#pandaal()
+	circle()
+	glutSwapBuffers()
+
 def main():
 	glutInit(sys.argv)
-	glutInitDisplayMode(GLUT_SINGLE| GLUT_RGB | GLUT_DEPTH )
-	glutInitWindowSize(800,800)
-	glutInitWindowPosition(10,10)
-	glutCreateWindow("Moving Man")
-	glutDisplayFunc(Display)
+	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB)
+	glutInitWindowPosition(10,50)
+	glutInitWindowSize(500,500)
+	glutCreateWindow("sumit")
+	glutDisplayFunc(pp)
+	glutTimerFunc(0,redraw,0)
 	init()
 	glutMainLoop()
-
-main()
+main()	
+	
 	
